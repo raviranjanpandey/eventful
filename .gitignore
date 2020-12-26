@@ -6,3 +6,4 @@ obj
 appsettings.json
 *.db
 wwwroot
+.vs/eventful

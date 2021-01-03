@@ -6,5 +6,5 @@ obj
 appsettings.json
 *.db
 wwwroot
-.vs/eventful
-client-app/.eslintcache
+.vs
+.vscode

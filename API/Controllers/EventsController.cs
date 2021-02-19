@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace API.Controllers
 {
+
     public class EventsController : BaseController
-    {
+    {      
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {

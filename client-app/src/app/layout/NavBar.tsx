@@ -12,7 +12,7 @@ export default function NavBar({openForm}: Props) {
           <img src="/assets/logo.png" alt="logo" style = {{marginRight: '10px'}} />
           Eventful
         </Menu.Item>
-        <Menu.Item name="Activities" />
+        <Menu.Item name="Events" />
         <Menu.Item>
           <Button onClick = {openForm} positive content="Create Event" />
         </Menu.Item>

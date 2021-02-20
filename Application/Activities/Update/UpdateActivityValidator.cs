@@ -1,12 +1,14 @@
 ﻿using Domain.Models;
 using FluentValidation;
+using System;
 
-namespace Application.Activities.Save
+namespace Application.Activities.Update
 {
-    public class ActivityValidator : AbstractValidator<Activity>
+    public class UpdateActivityValidator : AbstractValidator<Activity>
     {
-        public ActivityValidator()
+        public UpdateActivityValidator()
         {
+            RuleFor(x => x.Id).NotEmpty().NotEqual(Guid.Empty);
             RuleFor(x => x.Title).NotEmpty();
             RuleFor(x => x.Description).NotEmpty();
             RuleFor(x => x.Date).NotEmpty();

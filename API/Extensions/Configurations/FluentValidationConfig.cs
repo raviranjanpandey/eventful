@@ -11,7 +11,7 @@ namespace API.Extensions.Configurations
         {
             services.AddFluentValidation(new[]
             {
-                typeof(ActivityValidator).Assembly
+                typeof(CreateActivityValidator).Assembly
             });
         }
     }

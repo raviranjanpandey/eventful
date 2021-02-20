@@ -1,6 +1,7 @@
 ﻿using Application.Activities.Delete;
 using Application.Activities.Get;
 using Application.Activities.Save;
+using Application.Activities.Update;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,10 +24,16 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new GetById.Query { Id = id }));
         }
 
-        [HttpPost("Save")]
-        public async Task<IActionResult> Save([FromBody] Activity activity)
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create([FromBody] Activity activity)
         {
-            return HandleResult(await Mediator.Send(new SaveActivity.Command { Activity = activity }));
+            return HandleResult(await Mediator.Send(new CreateActivity.Command { Activity = activity }));
+        }
+
+        [HttpPut("Update")]
+        public async Task<IActionResult> Update([FromBody] Activity activity)
+        {
+            return HandleResult(await Mediator.Send(new UpdateActivity.Command { Activity = activity }));
         }
 
         [HttpDelete("Delete/{id}")]

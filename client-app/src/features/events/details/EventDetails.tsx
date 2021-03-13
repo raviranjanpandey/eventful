@@ -1,9 +1,13 @@
 import { observer } from "mobx-react-lite";
 import React, { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { Button, ButtonGroup, Card, Image } from "semantic-ui-react";
+import { useParams } from "react-router-dom";
+import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
+import EventDetailedChats from "./EventDetailedChats";
+import EventDetailedHeader from "./EventDetailedHeader";
+import EventDetailedInfo from "./EventDetailedInfo";
+import EventDetailedSidebar from "./EventDetailedSidebar";
 
 export default observer(function EventDetails() {
   const { activityStore } = useStore();
@@ -21,21 +25,15 @@ export default observer(function EventDetails() {
 
   if (loadingInitial || !activity) return <LoadingComponent />;
   return (
-    <Card fluid>
-      <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
-      <Card.Content>
-        <Card.Header>{activity.title}</Card.Header>
-        <Card.Meta>
-          <span>{activity.date}</span>
-        </Card.Meta>
-        <Card.Description>{activity.description}</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <ButtonGroup widths={2}>
-          <Button as = {Link} to = {`/manage/${activity.id}`} basic color="blue" content="Edit" />
-          <Button as = {Link} to = '/events' basic color="grey" content="Cancel" />
-        </ButtonGroup>
-      </Card.Content>
-    </Card>
+   <Grid>
+     <Grid.Column width = {10}>
+       <EventDetailedHeader activity = {activity} />
+       <EventDetailedInfo activity = {activity} />
+       <EventDetailedChats />
+     </Grid.Column>
+     <Grid.Column width = {6}> 
+      <EventDetailedSidebar />
+     </Grid.Column>
+   </Grid>
   );
 })

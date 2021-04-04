@@ -15,7 +15,7 @@ export default observer(function EventDashboard() {
   }, [activityRegistry.size,loadActivities]);
 
   if (activityStore.loadingInitial)
-    return <LoadingComponent content="Loading app..." />;
+    return <LoadingComponent content="Loading events..." />;
   return (
     <Grid>
       <Grid.Column width="10">

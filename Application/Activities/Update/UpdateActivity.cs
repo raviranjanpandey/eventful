@@ -11,7 +11,7 @@ namespace Application.Activities.Update
 {
     public class UpdateActivity
     {
-        public class Command : IRequest<Result<bool>>
+        public class Command : IRequest<Result<Unit>>
         {
             public Activity Activity { get; set; }
         }
@@ -24,7 +24,7 @@ namespace Application.Activities.Update
             }
         }
 
-        public class CommandHandler : IRequestHandler<Command, Result<bool>>
+        public class CommandHandler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _dataContext;
             private readonly IMapper _mapper;
@@ -33,23 +33,19 @@ namespace Application.Activities.Update
                 _dataContext = dataContext;
                 _mapper = mapper;
             }
-            public async Task<Result<bool>> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var activity = await _dataContext.Activities.FindAsync(request.Activity.Id);
 
-                if (activity == null) return Result<bool>.Failure("No Records to update.");
+                if (activity == null) return null;
 
                 _mapper.Map(request.Activity, activity);
 
-                if (_dataContext.ChangeTracker.HasChanges())
-                {
-                    var result = await _dataContext.SaveChangesAsync() > 0;
-                    return Result<bool>.Success(result);
-                }
-                else
-                {
-                    return Result<bool>.NoChangesDetected("No Changes to update.");
-                }             
+                var result = await _dataContext.SaveChangesAsync() > 0;
+
+                if (!result) return Result<Unit>.Failure("Failed to update activity");
+
+                return Result<Unit>.Success(Unit.Value);             
             }
         }
     }

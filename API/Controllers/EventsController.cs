@@ -1,4 +1,5 @@
-﻿using Application.Activities.Delete;
+﻿using Application.Activities;
+using Application.Activities.Delete;
 using Application.Activities.Get;
 using Application.Activities.Save;
 using Application.Activities.Update;
@@ -39,6 +40,12 @@ namespace API.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             return HandleResult(await Mediator.Send(new DeleteActivity.Command { Id = id }));
+        }
+
+        [HttpPost("{id}/attend")]
+        public async Task<IActionResult> Attend(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateAttendance.Command { Id = id }));
         }
 
     }

@@ -1,8 +1,10 @@
 ﻿using Application.Core;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Models;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
 using System.Threading;
@@ -29,13 +31,27 @@ namespace Application.Activities.Save
         {
             private readonly DataContext _dataContext;
             private readonly IMapper _mapper;
-            public CommandHandler(DataContext dataContext, IMapper mapper)
+            private readonly IUserAccessor _userAccessor;
+            public CommandHandler(DataContext dataContext, IMapper mapper, IUserAccessor userAccessor)
             {
                 _dataContext = dataContext;
                 _mapper = mapper;
+                _userAccessor = userAccessor;
             }
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                var user = await _dataContext.Users.FirstOrDefaultAsync(x =>
+                   x.UserName == _userAccessor.GetUsername());
+
+                var attendee = new ActivityAttendee
+                {
+                    AppUser = user,
+                    Activity = request.Activity,
+                    IsHost = true
+                };
+
+                request.Activity.Attendees.Add(attendee);
+
                 _dataContext.Activities.Add(request.Activity);
 
                 var result = await _dataContext.SaveChangesAsync() > 0;

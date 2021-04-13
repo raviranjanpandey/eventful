@@ -24,8 +24,8 @@ namespace Application.Activities.Get
         public async Task<Result<List<ActivityDto>>> Handle(GetAll request, CancellationToken cancellationToken)
         {
             var activities = await _dataContext.Activities
-                             .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
-                             .ToListAsync(cancellationToken);
+                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider)
+                    .ToListAsync(cancellationToken);
 
             return Result<List<ActivityDto>>.Success(activities);
         }

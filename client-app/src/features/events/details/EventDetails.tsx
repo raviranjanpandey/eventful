@@ -25,15 +25,15 @@ export default observer(function EventDetails() {
 
   if (loadingInitial || !activity) return <LoadingComponent />;
   return (
-   <Grid>
-     <Grid.Column width = {10}>
-       <EventDetailedHeader activity = {activity} />
-       <EventDetailedInfo activity = {activity} />
-       <EventDetailedChats />
-     </Grid.Column>
-     <Grid.Column width = {6}> 
-      <EventDetailedSidebar />
-     </Grid.Column>
-   </Grid>
+    <Grid>
+      <Grid.Column width={10}>
+        <EventDetailedHeader activity={activity} />
+        <EventDetailedInfo activity={activity} />
+        <EventDetailedChats />
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <EventDetailedSidebar activity={activity} />
+      </Grid.Column>
+    </Grid>
   );
-})
+});

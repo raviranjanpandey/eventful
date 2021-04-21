@@ -12,7 +12,7 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import MySelectInput from "../../../app/common/form/MySelectInput";
 import { categoryOptions } from "../../../app/common/options/categoryOptions";
 import MyDateInput from "../../../app/common/form/MyDateInput";
-import { Activity } from "../../../app/models/activity";
+import { ActivityFormValues } from "../../../app/models/activity";
 
 export default observer(function EventForm() {
   const history = useHistory();
@@ -20,22 +20,13 @@ export default observer(function EventForm() {
   const {
     createActivity,
     updateActivity,
-    loading,
     loadActivity,
     loadingInitial,
   } = activityStore;
 
   const { id } = useParams<{ id: string }>();
 
-  const [activity, setActivity] = useState<Activity>({
-    id: "",
-    title: "",
-    category: "",
-    description: "",
-    date: null,
-    city: "",
-    venue: "",
-  });
+  const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
   const validationSchema = Yup.object({
     title: Yup.string().required("The event title required."),
@@ -47,35 +38,34 @@ export default observer(function EventForm() {
   });
 
   useEffect(() => {
-    if (id) loadActivity(id).then((activity) => setActivity(activity!));
+    if (id) loadActivity(id).then((activity) => setActivity(new ActivityFormValues(activity)));
   }, [id, loadActivity]);
 
-  function handleFormSubmit(activity: Activity){
-     if(activity.id.length === 0)
-     {
-        let newActivity = {
-            ...activity,
-            id: uuid()
-        };
-        createActivity(newActivity).then(() => history.push(`/events/${newActivity.id}`))
-     } else {
-         updateActivity(activity).then(() => history.push(`/events/${activity.id}`))
-     }
+  function handleFormSubmit(activity: ActivityFormValues) {
+    if (!activity.id) {
+      let newActivity = {
+        ...activity,
+        id: uuid()
+      };
+      createActivity(newActivity).then(() => history.push(`/events/${newActivity.id}`))
+    } else {
+      updateActivity(activity).then(() => history.push(`/events/${activity.id}`))
+    }
   }
 
-  
+
 
   if (loadingInitial) return <LoadingComponent content="Loading event..." />;
   return (
     <Segment clearing>
-      <Header content = "Event Details" sub color = "teal" />
+      <Header content="Event Details" sub color="teal" />
       <Formik
         enableReinitialize
         initialValues={activity}
         onSubmit={(values) => handleFormSubmit(activity)}
         validationSchema={validationSchema}
       >
-        {({ handleSubmit, isValid, isSubmitting, dirty}) => (
+        {({ handleSubmit, isValid, isSubmitting, dirty }) => (
           <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
             <MyTextInput name="title" placeholder="Title" />
             <MyTextArea rows={3} placeholder="Description" name="description" />
@@ -91,12 +81,12 @@ export default observer(function EventForm() {
               timeCaption="time"
               dateFormat="MMMM d, yyyy h:mm aa"
             />
-            <Header content = "Location Details" sub color = "teal" />
+            <Header content="Location Details" sub color="teal" />
             <MyTextInput placeholder="City" name="city" />
             <MyTextInput placeholder="Venue" name="venue" />
             <Button
-              disabled = {isSubmitting || !dirty || !isValid}
-              loading={loading}
+              disabled={isSubmitting || !dirty || !isValid}
+              loading={isSubmitting}
               floated="right"
               positive
               type="submit"

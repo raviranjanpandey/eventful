@@ -9,6 +9,8 @@ using FluentValidation.AspNetCore;
 using Application.Activities.Save;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Application.Interfaces;
+using Infrastructure.Photos;
 
 namespace API
 {
@@ -34,6 +36,8 @@ namespace API
                 config.RegisterValidatorsFromAssemblyContaining<CreateActivityValidator>();
             });
             services.ConfigureServicesInAssembly(Configuration);
+            services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

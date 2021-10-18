@@ -4,10 +4,6 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 appsettings.json
-launch.json
-bin
-obj
-.vscode
 
 # User-specific files
 *.rsuser
@@ -260,11 +256,10 @@ UpgradeLog*.htm
 ServiceFabricBackup/
 *.rptproj.bak
 
-# Server files
+# SQL Server files
 *.mdf
 *.ldf
 *.ndf
-
 
 # Business Intelligence projects
 *.rdl.data
@@ -431,6 +426,7 @@ $RECYCLE.BIN/
 *.msix
 *.msm
 *.msp
+
 # Windows shortcuts
 *.lnk
 

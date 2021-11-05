@@ -3,6 +3,7 @@ using Application.Activities.Delete;
 using Application.Activities.Get;
 using Application.Activities.Save;
 using Application.Activities.Update;
+using Application.Core;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,9 +14,9 @@ namespace API.Controllers
     public class EventsController : BaseController
     {
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PagingParams param)
         {
-            return HandleResult(await Mediator.Send(new GetAll()));
+            return HandlePagedResult(await Mediator.Send(new GetAll() { Params = param}));
         }
 
         [HttpGet("GetById/{id}")]

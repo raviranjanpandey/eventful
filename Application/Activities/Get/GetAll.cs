@@ -6,14 +6,18 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Activities.Get
 {
-    public class GetAll : IRequest<Result<List<ActivityDto>>> { }
+    public class GetAll : IRequest<Result<PagedList<ActivityDto>>>
+    {
+        public PagingParams Params { get; set; }
+    }
 
-    public class GetAllHandler : IRequestHandler<GetAll, Result<List<ActivityDto>>>
+    public class GetAllHandler : IRequestHandler<GetAll, Result<PagedList<ActivityDto>>>
     {
         private readonly DataContext _dataContext;
         private readonly IMapper _mapper;
@@ -25,14 +29,17 @@ namespace Application.Activities.Get
             _mapper = mapper;
             _userAccessor = userAccessor;
         }
-        public async Task<Result<List<ActivityDto>>> Handle(GetAll request, CancellationToken cancellationToken)
+        public async Task<Result<PagedList<ActivityDto>>> Handle(GetAll request, CancellationToken cancellationToken)
         {
-            var activities = await _dataContext.Activities
-                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, 
-                     new { currentUsername = _userAccessor.GetUsername()})
-                    .ToListAsync(cancellationToken);
+            var query = _dataContext.Activities
+                    .OrderBy(d => d.Date)
+                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider,
+                     new { currentUsername = _userAccessor.GetUsername() })
+                    .AsQueryable();
 
-            return Result<List<ActivityDto>>.Success(activities);
+            return Result<PagedList<ActivityDto>>.Success(
+                await PagedList<ActivityDto>.CreateAsync(query, request.Params.PageNumber,
+                request.Params.PageSize));
         }
     }
 }

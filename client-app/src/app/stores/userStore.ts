@@ -5,60 +5,66 @@ import { User, UserFormValues } from "../models/user";
 import { store } from "./store";
 
 export default class UserStore {
-  user: User | null = null;
+    user: User | null = null;
 
-  constructor() {
-    makeAutoObservable(this);
-  }
-
-  get isLoggedIn() {
-    return !!this.user;
-  }
-
-  login = async (cred: UserFormValues) => {
-    try {
-      const user = await agent.Account.login(cred);
-      store.commonStore.setToken(user.token);
-      runInAction(() => {
-        this.user = user;
-      });
-      history.push("/events");
-      store.modalStore.closeModal();
-    } catch (error) {
-      throw error;
+    constructor() {
+        makeAutoObservable(this)
     }
-  };
 
-  logout = () => {
-    store.commonStore.setToken(null);
-    window.localStorage.removeItem("jwt");
-    this.user = null;
-    history.push("/");
-  };
-
-  getUser = async () => {
-    try {
-      const user = await agent.Account.current();
-      runInAction(() => (this.user = user));
-    } catch (error) {
-      console.log(error);
+    get isLoggedIn() {
+        return !!this.user;
     }
-  };
 
-  register = async (creds: UserFormValues) => {
-    try {
-      const user = await agent.Account.register(creds);
-      store.commonStore.setToken(user.token);
-      runInAction(() => {
-        this.user = user;
-      });
-      history.push("/events");
-      store.modalStore.closeModal();
-    } catch (error) {
-      throw error;
+    login = async (cred: UserFormValues) => {
+        try {
+          const user = await agent.Account.login(cred);
+          store.commonStore.setToken(user.token);
+          runInAction(() => {
+            this.user = user;
+          });
+          history.push("/events");
+          store.modalStore.closeModal();
+        } catch (error) {
+          throw error;
+        }
+      };
+
+    logout = () => {
+        store.commonStore.setToken(null);
+        window.localStorage.removeItem('jwt');
+        this.user = null;
+        history.push('/');
     }
-  };
-  setImage = (image: string) => {
-    if (this.user) this.user.image = image;
-  };
+
+    getUser = async () => {
+        try {
+            const user = await agent.Account.current();
+            runInAction(() => this.user = user);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    register = async (creds: UserFormValues) => {
+        try {
+          const user = await agent.Account.register(creds);
+          store.commonStore.setToken(user.token);
+          runInAction(() => {
+            this.user = user;
+          });
+          history.push("/events");
+          store.modalStore.closeModal();
+        } catch (error) {
+          throw error;
+        }
+      };
+    
+
+    setImage = (image: string) => {
+        if (this.user) this.user.image = image;
+    } 
+
+    setDisplayName = (name: string) => {
+        if (this.user) this.user.displayName = name;
+    }
 }

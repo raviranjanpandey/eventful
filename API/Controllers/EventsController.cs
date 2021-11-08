@@ -14,7 +14,7 @@ namespace API.Controllers
     public class EventsController : BaseController
     {
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll([FromQuery] PagingParams param)
+        public async Task<IActionResult> GetAll([FromQuery] ActivityParams param)
         {
             return HandlePagedResult(await Mediator.Send(new GetAll() { Params = param}));
         }

@@ -1,7 +1,7 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Activity, ActivityFormValues } from "../models/activity";
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 import { store } from "./store";
 import { Profile } from "../models/profile";
 import { Pagination, PagingParams } from "../models/pagination";
@@ -14,19 +14,64 @@ export default class ActivityStore {
     loadingInitial = false;
     pagination: Pagination | null = null;
     pagingParams = new PagingParams();
+    predicate = new Map().set('all', true);
 
     constructor() {
-        makeAutoObservable(this)
+        makeAutoObservable(this);
+        reaction(
+            () => this.predicate.keys(),
+            () => {
+                this.pagingParams = new PagingParams();
+                this.activityRegistry.clear();
+                this.loadActivities();
+            }
+        )
     }
 
     setPagingParams = (pagingParams: PagingParams) => {
         this.pagingParams = pagingParams;
     }
 
+    setPredicate = (predicate: string, value: string | Date) => {
+        const resetPredicate = () => {
+            this.predicate.forEach((value, key) => {
+                if (key !== "startDate") this.predicate.delete(key);
+            })
+        }
+        switch (predicate) {
+            case "all":
+                resetPredicate();
+                this.predicate.set("all", true);
+                break;
+            case "isGoing":
+                resetPredicate();
+                this.predicate.set("isGoing", true);
+                break;
+            case "isHost":
+                resetPredicate();
+                this.predicate.set("isHost", true);
+                break;
+            case "startDate":
+                resetPredicate();
+                this.predicate.delete("startDate");
+                this.predicate.set("startDate", value);
+                break;
+            default:
+                break;
+        }
+    }
+
     get axiosParams() {
         const params = new URLSearchParams();
-        params.append('pageNumber',this.pagingParams.pageNumber.toString());
-        params.append('pageSize',this.pagingParams.pageSize.toString());
+        params.append('pageNumber', this.pagingParams.pageNumber.toString());
+        params.append('pageSize', this.pagingParams.pageSize.toString());
+        this.predicate.forEach((value, key) => {
+            if (key === "startDate") {
+                params.append(key, (value as Date).toISOString())
+            } else {
+                params.append(key, value);
+            }
+        })
         return params;
     }
 
@@ -41,7 +86,7 @@ export default class ActivityStore {
                 const date = format(activity.date!, 'dd MMM yyyy');
                 activities[date] = activities[date] ? [...activities[date], activity] : [activity];
                 return activities;
-            }, {} as {[key: string]: Activity[]})
+            }, {} as { [key: string]: Activity[] })
         )
     }
 
@@ -129,10 +174,10 @@ export default class ActivityStore {
             await agent.Activities.update(activity);
             runInAction(() => {
                 if (activity.id) {
-                    let updatedActivity = {...this.getActivity(activity.id), ...activity}
+                    let updatedActivity = { ...this.getActivity(activity.id), ...activity }
                     this.activityRegistry.set(activity.id, updatedActivity as Activity);
                     this.selectedActivity = updatedActivity as Activity;
-                } 
+                }
             })
         } catch (error) {
             console.log(error);
@@ -162,7 +207,7 @@ export default class ActivityStore {
             await agent.Activities.attend(this.selectedActivity!.id);
             runInAction(() => {
                 if (this.selectedActivity?.isGoing) {
-                    this.selectedActivity.attendees = 
+                    this.selectedActivity.attendees =
                         this.selectedActivity.attendees?.filter(a => a.username !== user?.username);
                     this.selectedActivity.isGoing = false;
                 } else {

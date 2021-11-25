@@ -10,11 +10,11 @@ import EventDetails from "../../features/events/details/EventDetails";
 import { ToastContainer } from "react-toastify";
 import NotFound from "../../features/errors/NotFound";
 import ServerError from "../../features/errors/ServerError";
-import LoginForm from "../../features/users/LoginForm";
 import { useStore } from "../stores/store";
 import LoadingComponent from "./LoadingComponent";
 import ModalContainer from "../common/modals/ModalContainer";
 import ProfilePage from "../../features/profiles/ProfilePage";
+import PrivateRoute from "./PrivateRoute";
 
 function App() {
   const location = useLocation();
@@ -42,16 +42,15 @@ function App() {
             <NavBar />
             <Container style={{ marginTop: "7em" }}>
               <Switch>
-                <Route exact path="/events" component={EventDashboard} />
-                <Route path="/events/:id" component={EventDetails} />
-                <Route
+                <PrivateRoute exact path="/events" component={EventDashboard} />
+                <PrivateRoute path="/events/:id" component={EventDetails} />
+                <PrivateRoute
                   key={location.key}
                   path={["/createEvent", "/manage/:id"]}
                   component={EventForm}
                 />
-                <Route path="/profiles/:username" component={ProfilePage} />
-                <Route path="/server-error" component={ServerError} />
-                <Route path="/login" component={LoginForm} />
+                <PrivateRoute path="/profiles/:username" component={ProfilePage} />
+                <PrivateRoute path="/server-error" component={ServerError} />
                 <Route component={NotFound} />
               </Switch>
             </Container>

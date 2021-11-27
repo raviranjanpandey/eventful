@@ -1,5 +1,5 @@
 # Eventful is an Event Manager Web Application where user can create, host or join an event. User can create an event group and can follow and chat to each other.
-The Project is a combination of dotnet 5.0 Webapi and dotnet technologies for the backend and React JS for the frontend. It has utilised best coding practices, architecture, patterns and clean coding principles.
+The Project is a combination of dotnet Webapi and dotnet technologies for the backend and React JS for the frontend. It has utilised best coding practices, architecture, patterns and clean coding principles.
 
 Here is the summary of the project:
 1. The Web API is built in .Net Core with Clean Architecture using the CQRS + Mediator pattern.
